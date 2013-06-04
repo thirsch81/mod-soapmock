@@ -1,0 +1,14 @@
+{
+  "main":"de.thhi.soapmock.MockServerVerticle",
+
+  // If your module is going to be registered in the Vert.x module registry you will also need the following
+  // mandatory fields
+  "description":"Simple Mock Service",
+  "licenses": ["The Apache Software License Version 2.0"],
+  "author": "Thomas Hirsch",
+
+  // Optional fields
+  "developers": [],
+  "keywords": [],
+  "homepage": ""
+}
