@@ -1,5 +1,5 @@
 {
-  "main":"de.thhi.soapmock.MockServerVerticle",
+  "main":"groovy:de.thhi.soapmock.StarterVerticle",
 
   // If your module is going to be registered in the Vert.x module registry you will also need the following
   // mandatory fields

@@ -27,13 +27,10 @@ def testSomethingElse() {
 // Make sure you initialize
 VertxTests.initialize(this)
 
-// The script is execute for each test, so this will deploy the module for each one
-// Deploy the module - the System property `vertx.modulename` will contain the name of the module so you
-// don't have to hardcode it in your tests
-container.deployModule("vertx.modulename", { asyncResult ->
+container.deployModule("de.thhi~soapmock~0.5.0", { asyncResult ->
 	// Deployment is asynchronous and this this handler will be called when it's complete (or failed)
-	container.logger.info(asyncResult)
 	assertTrue(asyncResult.succeeded())
+	container.logger.info(asyncResult?.cause())
 	assertNotNull("deploymentID should not be null", asyncResult.result())
 	// If deployed correctly then start the tests!
 	VertxTests.startTests(this)
