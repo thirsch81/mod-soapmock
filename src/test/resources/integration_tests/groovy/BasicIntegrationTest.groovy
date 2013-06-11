@@ -5,7 +5,6 @@ import org.vertx.groovy.testtools.VertxTests
 import de.thhi.soapmock.MockServerVerticle
 import de.thhi.soapmock.RenderVerticle
 
-
 // The test methods must being with "test"
 
 def testHTTP() {

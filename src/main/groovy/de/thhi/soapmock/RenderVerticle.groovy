@@ -4,7 +4,6 @@ import groovy.text.SimpleTemplateEngine
 
 import org.vertx.groovy.core.eventbus.EventBus
 import org.vertx.groovy.platform.Verticle
-import org.vertx.java.core.logging.Logger
 
 public class RenderVerticle extends Verticle {
 
