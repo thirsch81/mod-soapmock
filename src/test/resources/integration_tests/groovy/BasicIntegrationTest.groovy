@@ -1,28 +1,38 @@
 import static org.vertx.testtools.VertxAssert.*
 
+import org.vertx.groovy.core.http.HttpClientResponse
 import org.vertx.groovy.testtools.VertxTests
 
 import de.thhi.soapmock.MockServerVerticle
 import de.thhi.soapmock.RenderVerticle
+import de.thhi.soapmock.StarterVerticle
 
 // The test methods must being with "test"
 
 def testHTTP() {
 
-	container.deployVerticle("groovy:" + MockServerVerticle.class.name) { result ->
+	container.deployVerticle("groovy:" + StarterVerticle.class.name) { result ->
 		assertNotNull(result)
-		container.logger.info(result?.cause())
+		if(result.failed) {
+			container.logger.info("Error: " + result.cause())
+		}
 		assertTrue(result.succeeded)
-		testComplete()
+		vertx.createHttpClient().setHost("localhost").setPort(8080).getNow("/test") { HttpClientResponse resp ->
+			assertEquals(200, resp.statusCode)
+			resp.bodyHandler {
+				container.logger.info(it)
+				assertTrue(it.toString().contains("Mock server running"))
+				testComplete()
+			}
+		}
 	}
-
-	//    vertx.createHttpClient().setPort(8181).getNow("/", { resp ->
-	//      assertEquals(200, resp.statusCode)
 }
 
 def testDeployMockServerVerticle() {
 	container.deployVerticle("groovy:" + MockServerVerticle.class.name) { result ->
-		container.logger.info("Error: " + result?.cause())
+		if(result.failed) {
+			container.logger.info("Error: " + result.cause())
+		}
 		assertTrue(result.succeeded)
 		testComplete()
 	}
@@ -30,7 +40,9 @@ def testDeployMockServerVerticle() {
 
 def testDeployRenderVerticle() {
 	container.deployWorkerVerticle("groovy:" + RenderVerticle.class.name) { result ->
-		container.logger.info("Error: " + result?.cause())
+				if(result.failed) {
+			container.logger.info("Error: " + result.cause())
+		}
 		assertTrue(result.succeeded)
 		testComplete()
 	}

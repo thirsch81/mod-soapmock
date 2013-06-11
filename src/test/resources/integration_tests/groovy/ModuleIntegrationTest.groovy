@@ -27,14 +27,14 @@ def testSomethingElse() {
 // Make sure you initialize
 VertxTests.initialize(this)
 
-container.deployModule("de.thhi~soapmock~0.5.0", { asyncResult ->
+container.deployModule("de.thhi~soapmock~0.5.0") { asyncResult ->
 	// Deployment is asynchronous and this this handler will be called when it's complete (or failed)
 	assertTrue(asyncResult.succeeded())
 	container.logger.info(asyncResult?.cause())
 	assertNotNull("deploymentID should not be null", asyncResult.result())
 	// If deployed correctly then start the tests!
 	VertxTests.startTests(this)
-})
+}
 
 
 
