@@ -13,10 +13,7 @@ def testHTTP() {
 
 	container.deployVerticle("groovy:" + StarterVerticle.class.name) { result ->
 		assertNotNull(result)
-		if(result.failed) {
-			container.logger.info("Error: " + result.cause())
-		}
-		assertTrue(result.succeeded)
+		assertTrue(result.cause(), result.succeeded)
 		vertx.createHttpClient().setHost("localhost").setPort(8080).getNow("/test") { HttpClientResponse resp ->
 			assertEquals(200, resp.statusCode)
 			resp.bodyHandler {
@@ -30,27 +27,21 @@ def testHTTP() {
 
 def testDeployMockServerVerticle() {
 	container.deployVerticle("groovy:" + MockServerVerticle.class.name) { result ->
-		if(result.failed) {
-			container.logger.info("Error: " + result.cause())
-		}
-		assertTrue(result.succeeded)
+		assertTrue(result.cause(), result.succeeded)
 		testComplete()
 	}
 }
 
 def testDeployRenderVerticle() {
 	container.deployWorkerVerticle("groovy:" + RenderVerticle.class.name) { result ->
-				if(result.failed) {
-			container.logger.info("Error: " + result.cause())
-		}
-		assertTrue(result.succeeded)
+		assertTrue(result.cause(), result.succeeded)
 		testComplete()
 	}
 }
 
 def testRenderVerticle() {
 	container.deployWorkerVerticle("groovy:" + RenderVerticle.class.name) { result ->
-		assertTrue(result.succeeded)
+		assertTrue(result.cause(), result.succeeded)
 		vertx.eventBus.send("render", ["name" : "response", "binding" : ["content" : "some content"]]) { reply ->
 			assertNotNull(reply)
 			container.logger.info(reply.body)
@@ -62,15 +53,6 @@ def testRenderVerticle() {
 			testComplete()
 		}
 	}
-}
-
-def testCompleteOnTimer() {
-	vertx.setTimer(1000, { timerID ->
-		assertNotNull(timerID)
-		// This demonstrates how tests are asynchronous - the timer does not fire until 1 second later -
-		// which is almost certainly after the test method has completed.
-		testComplete()
-	})
 }
 
 VertxTests.initialize(this)
