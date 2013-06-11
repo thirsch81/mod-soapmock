@@ -6,11 +6,11 @@ import org.vertx.groovy.testtools.VertxTests
 import de.thhi.soapmock.MockServerVerticle
 import de.thhi.soapmock.RenderVerticle
 import de.thhi.soapmock.StarterVerticle
+import de.thhi.soapmock.ExtractorVerticle
 
 // The test methods must being with "test"
 
 def testHTTP() {
-
 	container.deployVerticle("groovy:" + StarterVerticle.class.name) { result ->
 		assertNotNull(result)
 		assertTrue(result.cause(), result.succeeded)
@@ -39,6 +39,13 @@ def testDeployRenderVerticle() {
 	}
 }
 
+def testDeployExtractorVerticle() {
+	container.deployWorkerVerticle("groovy:" + ExtractorVerticle.class.name) { result ->
+		assertTrue(result.cause(), result.succeeded)
+		testComplete()
+	}
+}
+
 def testRenderVerticle() {
 	container.deployWorkerVerticle("groovy:" + RenderVerticle.class.name) { result ->
 		assertTrue(result.cause(), result.succeeded)
@@ -49,6 +56,22 @@ def testRenderVerticle() {
 				assertEquals(it.status, "ok")
 				assertNotNull(it.response)
 				assertTrue(it.response.contains("<?xml version=\"1.0\" encoding=\"UTF-8\" ?>"))
+			}
+			testComplete()
+		}
+	}
+}
+
+def testExtractorVerticle() {
+	container.deployWorkerVerticle("groovy:" + ExtractorVerticle.class.name) { result ->
+		assertTrue(result.cause(), result.succeeded)
+		vertx.eventBus.send("extract", ["source" : '<?xml version="1.0" encoding="UTF-8" ?><test>some content</test>']) { reply ->
+			assertNotNull(reply)
+			container.logger.info(reply.body)
+			reply.body.with {
+				assertEquals(it.status, "ok")
+				assertNotNull(it.binding)
+				assertEquals(it.binding, ["content": "some content"])
 			}
 			testComplete()
 		}

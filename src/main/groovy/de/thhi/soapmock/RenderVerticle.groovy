@@ -12,9 +12,15 @@ public class RenderVerticle extends Verticle {
 		def now = { System.currentTimeMillis() }
 		def t_time = now()
 		def templates = vertx.sharedData.getMap("templates")
-		new File("templates").eachFile {
-			templates[it.name - ".template"] = it.text
+		try {
+			new File("templates").eachFile {
+				container.logger.info("RenderVerticle: reading template ${it}")
+				templates[it.name - ".template"] = it.text
+			}
+		} catch (Exception e) {
+			container.logger.error("RenderVerticle: ${e.message}")
 		}
+
 		container.logger.info("RenderVerticle: read ${templates.size()} templates in ${now() - t_time}ms")
 
 		vertx.eventBus.registerHandler("render") { message ->
