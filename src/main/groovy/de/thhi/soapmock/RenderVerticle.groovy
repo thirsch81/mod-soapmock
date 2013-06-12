@@ -11,7 +11,7 @@ public class RenderVerticle extends Verticle {
 
 		def now = { System.currentTimeMillis() }
 		def t_time = now()
-		def templates = vertx.sharedData.getMap("templates")
+		def templates = vertx.sharedData.getMap("rendererTemplates")
 		try {
 			new File("templates").eachFile {
 				container.logger.info("RenderVerticle: reading template ${it}")
@@ -20,10 +20,9 @@ public class RenderVerticle extends Verticle {
 		} catch (Exception e) {
 			container.logger.error("RenderVerticle: ${e.message}")
 		}
-
 		container.logger.info("RenderVerticle: read ${templates.size()} templates in ${now() - t_time}ms")
 
-		vertx.eventBus.registerHandler("render") { message ->
+		vertx.eventBus.registerHandler("renderer.render") { message ->
 
 			def body = message.body
 			container.logger.info("RenderVerticle: received ${body}")
@@ -53,7 +52,7 @@ public class RenderVerticle extends Verticle {
 	}
 
 	def render(name, binding) {
-		def template = vertx.sharedData.getMap("templates")[name]
+		def template = vertx.sharedData.getMap("rendererTemplates")[name]
 		["status": "ok", "${name}": new SimpleTemplateEngine().createTemplate(template).make(binding).toString()]
 	}
 }

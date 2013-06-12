@@ -13,7 +13,7 @@ import de.thhi.soapmock.ExtractorVerticle
 def testHTTP() {
 	container.deployVerticle("groovy:" + StarterVerticle.class.name) { result ->
 		assertNotNull(result)
-		assertTrue(result.cause(), result.succeeded)
+		assertTrue("${result.cause()}", result.succeeded)
 		vertx.createHttpClient().setHost("localhost").setPort(8080).getNow("/test") { HttpClientResponse resp ->
 			assertEquals(200, resp.statusCode)
 			resp.bodyHandler {
@@ -27,35 +27,36 @@ def testHTTP() {
 
 def testDeployMockServerVerticle() {
 	container.deployVerticle("groovy:" + MockServerVerticle.class.name) { result ->
-		assertTrue(result.cause(), result.succeeded)
+		assertTrue("${result.cause()}", result.succeeded)
 		testComplete()
 	}
 }
 
 def testDeployRenderVerticle() {
 	container.deployWorkerVerticle("groovy:" + RenderVerticle.class.name) { result ->
-		assertTrue(result.cause(), result.succeeded)
+		assertTrue("${result.cause()}", result.succeeded)
 		testComplete()
 	}
 }
 
 def testDeployExtractorVerticle() {
 	container.deployWorkerVerticle("groovy:" + ExtractorVerticle.class.name) { result ->
-		assertTrue(result.cause(), result.succeeded)
+		assertTrue("${result.cause()}", result.succeeded)
 		testComplete()
 	}
 }
 
 def testRenderVerticle() {
 	container.deployWorkerVerticle("groovy:" + RenderVerticle.class.name) { result ->
-		assertTrue(result.cause(), result.succeeded)
-		vertx.eventBus.send("render", ["name" : "response", "binding" : ["content" : "some content"]]) { reply ->
+		assertTrue("${result.cause()}", result.succeeded)
+		vertx.eventBus.send("renderer.render", ["name" : "test-response", "binding" : ["content" : "some content"]]) { reply ->
 			assertNotNull(reply)
 			container.logger.info(reply.body)
 			reply.body.with {
-				assertEquals(it.status, "ok")
-				assertNotNull(it.response)
-				assertTrue(it.response.contains("<?xml version=\"1.0\" encoding=\"UTF-8\" ?>"))
+				assertEquals("ok", it.status)
+				assertNotNull(it."test-response")
+				assertTrue(it."test-response".contains('<?xml version="1.0" encoding="UTF-8" ?>'))
+				assertTrue(it."test-response".contains("some content"))
 			}
 			testComplete()
 		}
@@ -64,14 +65,14 @@ def testRenderVerticle() {
 
 def testExtractorVerticle() {
 	container.deployWorkerVerticle("groovy:" + ExtractorVerticle.class.name) { result ->
-		assertTrue(result.cause(), result.succeeded)
-		vertx.eventBus.send("extract", ["source" : '<?xml version="1.0" encoding="UTF-8" ?><test>some content</test>']) { reply ->
+		assertTrue("${result.cause()}", result.succeeded)
+		vertx.eventBus.send("extractor.extract", ["source" : '<?xml version="1.0" encoding="UTF-8" ?><root><test>some content</test></root>']) { reply ->
 			assertNotNull(reply)
 			container.logger.info(reply.body)
 			reply.body.with {
-				assertEquals(it.status, "ok")
+				assertEquals("ok",it.status )
 				assertNotNull(it.binding)
-				assertEquals(it.binding, ["content": "some content"])
+				assertEquals(["content": "some content"], it.binding)
 			}
 			testComplete()
 		}
