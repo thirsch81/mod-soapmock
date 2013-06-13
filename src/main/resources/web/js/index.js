@@ -1,6 +1,6 @@
 var eb = null;
 
-$(document).ready(function() {
+jQuery(function() {
 	openConn();
 });
 

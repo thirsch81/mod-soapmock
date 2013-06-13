@@ -1,0 +1,4 @@
+textarea[name='script-input'] {
+	resize: vertical;
+	font-family: "Courier New";
+}

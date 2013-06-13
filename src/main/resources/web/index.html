@@ -3,10 +3,9 @@
 <head>
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>iteraMock</title>
-<link rel="stylesheet" type="text/css" href="css/main.css">
 <link rel="stylesheet" type="text/css" href="css/bootstrap.min.css">
-<link rel="stylesheet" type="text/css"
-	href="css/bootstrap-responsive.min.css">
+<link rel="stylesheet" type="text/css" href="css/bootstrap-responsive.min.css">
+<link rel="stylesheet" type="text/css" href="css/main.css">
 <script src="http://code.jquery.com/jquery-1.9.1.js"></script>
 <script src="http://code.jquery.com/ui/1.10.3/jquery-ui.js"></script>
 <script src="js/bootstrap.min.js"></script>
@@ -14,36 +13,57 @@
 <script src="js/vertxbus.js"></script>
 </head>
 <body data-spy="scroll">
-	<div class="page-header">
-		<div class="span1"></div>
-		<h1>iteraMock</h1>
-	</div>
-	<div class="container-fluid">
-		<div class="navbar">
+	<div class="container">
+		<div class="page-header">
+			<h1>iteraMock</h1>
+		</div>
+
+		<div class="navbar span6">
 			<div class="navbar-inner">
 				<ul class="nav" id="menu">
 					<li><a href="#general" data-toggle="tab">General</a></li>
 					<li><a href="#dispatch" data-toggle="tab">Dispatch</a></li>
-					<li><a href="#extract" data-toggle="tab">Extraction</a></li>
 					<li><a href="#templates" data-toggle="tab">Templates</a></li>
 				</ul>
 			</div>
 		</div>
-		<div class="tab-content">
-			<div class="tab-pane active" id="general">
-				General Settings
+	</div>
+	<div class="container">
+		<div class="tab-content span8">
+			<div class="tab-pane well active" id="general">
+				<div>Mock Server settings</div>
+				<p>
+				<div></div>
 			</div>
-			<div class="tab-pane" id="dispatch">
-				Dispatch Settings
+			<div class="tab-pane well" id="dispatch">
+				<strong>Dispatch rule</strong>
+				<p />
+				<div>Enter a Groovy script.</div>
+				<div>
+					The root node of incoming XLM request content is bound to
+					<code>
+						<a href="http://groovy.codehaus.org/api/groovy/util/Node.html">groovy.util.Node</a> root
+					</code>
+					.
+				</div>
+				<div>
+					The script must set a string value for
+					<code>template</code>
+					.
+				</div>
+				<p />
+				<p />
+				<textarea name="script-input" class="span7" rows="10" cols="80"></textarea>
+				<div class="row">
+					<div class="offset2">
+						<input class="span3" name="script-submit" type="button" disabled="disabled" value="Submit script" />
+					</div>
+				</div>
 			</div>
-			<div class="tab-pane" id="extract">
-				...
-			</div>
-			<div class="tab-pane" id="templates">
-				...
-			</div>
+			<div class="tab-pane well" id="templates">...</div>
 		</div>
 	</div>
 	<script src="js/index.js"></script>
+	<script src="js/script-input.js"></script>
 </body>
 </html>
