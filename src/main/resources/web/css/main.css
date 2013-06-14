@@ -1,4 +1,4 @@
-textarea[name='script-input'] {
+textarea.script-input {
 	resize: vertical;
-	font-family: "Courier New";
+	font-family: monospace;
 }

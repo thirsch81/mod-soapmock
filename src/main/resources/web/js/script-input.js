@@ -1,9 +1,18 @@
 jQuery(function() {
-	$("[name='script-input']").keyup(function() {
+	$(".script-input").keyup(function() {
+		var buttonName = $(this).attr("name").replace("input", "submit")
 		if ($(this).val() == "") {
-			$("[name='script-submit']").attr("disabled", "disabled");
+			disableButton(buttonName);
 		} else {
-			$("[name='script-submit']").removeAttr("disabled");
+			enableButton(buttonName);
 		}
 	});
 });
+
+function disableButton(name) {
+	$("[name='" + name + "']").attr("disabled", "disabled");
+}
+
+function enableButton(name) {
+	$("[name='" + name + "']").removeAttr("disabled");
+}
