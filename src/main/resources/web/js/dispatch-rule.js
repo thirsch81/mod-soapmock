@@ -10,33 +10,27 @@ jQuery(function() {
 function fetchDispatchScript() {
 	eb.send("extractor.dispatchRule", {
 		"action" : "fetch"
-	}, function(reply) {
-		if ("ok".equals(reply.body.status)) {
-			showSuccessMessage(reply.body.toSource());
-		} else {
-			showErrorMessage(reply.body.toSource());
-		}
-	});
+	}, updateScript);
 }
 
 function submitDispatchScript() {
+	disableButton("#rule-script-submit");
 	eb.send("extractor.dispatchRule", {
-		"action" : "fetch"
-	}, function(reply) {
-		if ("ok".equals(reply.body.status)) {
-			showSuccessMessage(reply.body.toSource());
-		} else {
-			showErrorMessage(reply.body.toSource());
-		}
-	});
+		"action" : "submit",
+		"script" : $("#rule-script-input").val()
+	}, handleReply);
 }
 
-function showSuccessMessage(message) {
-	$("#success-message").addClass("in");
-	$("#success-message p").text(message);
+function handleReply(reply) {
+	if ("ok" == reply.status) {
+		showSuccessMessage(JSON.stringify(reply));
+	} else {
+		showErrorMessage(JSON.stringify(reply));
+	}
 }
 
-function showErrorMessage(message) {
-	$("#error-message").addClass("in");
-	$("#success-message p").text(message);
+function updateScript(reply) {
+	handleReply(reply);
+	$("#rule-script-input").val(reply.script);
+	disableButton("#rule-script-submit");
 }

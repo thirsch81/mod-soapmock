@@ -9,7 +9,7 @@
 <script src="http://code.jquery.com/jquery-1.9.1.js"></script>
 <script src="http://code.jquery.com/ui/1.10.3/jquery-ui.js"></script>
 <script src="js/bootstrap.min.js"></script>
-<script src="http://cdn.sockjs.org/sockjs-0.3.min.js"></script>
+<script src="http://cdn.sockjs.org/sockjs-0.3.4.min.js"></script>
 <script src="js/vertxbus.js"></script>
 </head>
 <body data-spy="scroll">
@@ -30,52 +30,51 @@
 	</div>
 	<div class="container">
 		<div class="tab-content span8">
-			<div class="tab-pane well active" id="general">
-				<div>Mock Server settings</div>
-				<div class="v10"></div>
-				<div></div>
+			<div class="tab-pane active" id="general">
+				<div class="well">
+					<strong>Mock Server settings</strong>
+					<div class="v10"></div>
+					<div></div>
+				</div>
 			</div>
-			<div class="tab-pane well" id="dispatch">
-				<strong>Dispatch rule</strong>
-				<div class="v10"></div>
-				<div>Enter a Groovy script.</div>
-				<div>
-					The root node of incoming XLM request content is bound to
-					<code>
-						<a href="http://groovy.codehaus.org/api/groovy/util/Node.html">groovy.util.Node</a> root
-					</code>
-					.
-				</div>
-				<div>
-					The script must set a string value for
-					<code>template</code>
-					.
-				</div>
-				<div class="v10"></div>
-				<textarea id="rule-script-input" name="rule-script-input" class="script-input span7" rows="10" cols="80"></textarea>
-				<div class="row">
-					<div class="offset2">
-						<input id="rule-script-submit" class="span3" name="rule-script-submit" type="button" disabled="disabled"
-							value="Submit script" />
+			<div class="tab-pane" id="dispatch">
+				<div class="well">
+					<strong>Dispatch rule</strong>
+					<div class="v10"></div>
+					<div>Enter a Groovy script.</div>
+					<div>
+						The root node of incoming XLM request content is bound to
+						<code>
+							<a href="http://groovy.codehaus.org/api/groovy/util/Node.html">groovy.util.Node</a> root
+						</code>
+						.
+					</div>
+					<div>
+						The script must set a string value for
+						<code>template</code>
+						.
+					</div>
+					<div class="v10"></div>
+					<textarea id="rule-script-input" name="rule-script-input" class="script-input span7" rows="10" cols="80"></textarea>
+					<div class="row">
+						<div class="offset2">
+							<input id="rule-script-submit" class="span3" name="rule-script-submit" type="button" disabled="disabled"
+								value="Submit script" />
+						</div>
 					</div>
 				</div>
 				<div class="v10"></div>
-				<div id="error-message" class="alert alert-block alert-error fade">
-					<button type="button" class="close" data-dismiss="alert">x</button>
-					<strong class="alert-heading">Error!</strong>
-					<p></p>
-				</div>
-				<div id="success-message" class="alert alert-block alert-success fade">
-					<button type="button" class="close" data-dismiss="alert">x</button>
-					<strong class="alert-heading">Success!</strong>
-					<p></p>
-				</div>
-
+				<div class="alert-container"></div>
 			</div>
-			<div class="tab-pane well" id="templates">...</div>
+			<div class="tab-pane" id="templates">
+				<div class="well">
+					<strong>Template settings</strong>
+				</div>
+			</div>
 		</div>
 	</div>
 	<script src="js/index.js"></script>
 	<script src="js/script-input.js"></script>
+	<script src="js/dispatch-rule.js"></script>
 </body>
 </html>

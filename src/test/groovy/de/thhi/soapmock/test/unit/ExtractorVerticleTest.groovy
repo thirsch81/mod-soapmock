@@ -21,7 +21,7 @@ class ExtractorVerticleTest {
 		rules.put("dispatch", """if(root.test.text() == "some content") {
 	template = "test-response"
 }"""
-		)
+				)
 		def extractor = new ExtractorVerticle()
 		extractor.rules = { rules }
 		def shell = extractor.prepareShell('<?xml version="1.0" encoding="UTF-8" ?><root><test>some content</test></root>')
@@ -36,7 +36,8 @@ class ExtractorVerticleTest {
 		def extractor = new ExtractorVerticle()
 		extractor.rules = { rules }
 		def shell = extractor.prepareShell('<?xml version="1.0" encoding="UTF-8" ?><root><test>some content</test></root>')
-		extractor.extract(shell, rules, "test-response")
+		def result = extractor.extract(shell, rules, "test-response")
+		assertEquals(["status": "ok", "name": "test-response" ,"binding": ["content": "some content"]], result)
 		assertNull(shell.context.variables.template)
 		assertNull(shell.context.variables.root)
 		assertEquals("some content", shell.context.variables.content)

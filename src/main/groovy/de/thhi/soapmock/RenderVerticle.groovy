@@ -27,8 +27,8 @@ public class RenderVerticle extends Verticle {
 			def body = message.body
 			container.logger.info("RenderVerticle: received ${body}")
 			try {
-				body.name
-				body.binding
+				assert body.name
+				assert body.binding
 			} catch (Exception e) {
 				def errorMsg = "${e.message}: Expected message format: [name: <name>, binding: <binding>]"
 				container.logger.error(errorMsg)

@@ -21,11 +21,11 @@ public class MockServerVerticle extends Verticle {
 			container.logger.info("MockServer: received request ${request.method} ${request.uri}")
 			request.bodyHandler { body ->
 				container.logger.info("MockServer: ${body}")
-				vertx.eventBus.send("extract", ["source" : body.toString()]) { extractReply ->
+				vertx.eventBus.send("extractor.extract", ["source" : body.toString()]) { extractReply ->
 					container.logger.info("MockServer: received ${extractReply.body}")
-					vertx.eventBus.send("render", ["name" : "response", "binding" : extractReply.body.binding]) { renderReply ->
+					vertx.eventBus.send("renderer.render", ["name" : extractReply.body.name, "binding" : extractReply.body.binding]) { renderReply ->
 						container.logger.info("MockServer: received ${renderReply.body}")
-						request.response.end(renderReply.body.response)
+						request.response.end(renderReply.body[extractReply.body.name])
 					}
 				}
 			}
@@ -36,8 +36,8 @@ public class MockServerVerticle extends Verticle {
 		}
 		HttpServer server = vertx.createHttpServer()
 		server.requestHandler(rm.asClosure())
-		vertx.createSockJSServer(server).bridge([prefix: "/eventbus"], [], [])
-		server.listen(8080, "localhost")
+		vertx.createSockJSServer(server).bridge(prefix: "/eventbus", [[:]], [[:]])
+		server.listen(8080)
 
 		container.logger.info("MockServerVerticle started")
 	}

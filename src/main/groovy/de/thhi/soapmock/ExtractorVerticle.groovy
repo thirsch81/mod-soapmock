@@ -22,8 +22,8 @@ public class ExtractorVerticle extends Verticle {
 		["status": "error", "message": message]
 	}
 
-	def bindingOk(binding) {
-		["status": "ok", "binding": binding]
+	def bindingOk(name, binding) {
+		["status": "ok", "name" : name ,"binding": binding]
 	}
 
 	def fetchOk(script) {
@@ -49,7 +49,7 @@ public class ExtractorVerticle extends Verticle {
 		shell.context.variables.remove("template")
 		shell.evaluate(rules[template])
 		shell.context.variables.remove("root")
-		bindingOk(shell.context.variables)
+		bindingOk(template, shell.context.variables)
 	}
 
 	def handleDispatchRule = {  message ->
@@ -60,10 +60,11 @@ public class ExtractorVerticle extends Verticle {
 			if("submit".equals(body.action)) {
 				rules["dispatch"] = body.script
 				message.reply(submitOk())
-				container.logger.info("ExtractorVerticle: accepted dispatch rule")
+				container.logger.info("ExtractorVerticle: accepted dispatch rule from client")
 			}
 			if("fetch".equals(body.action)) {
 				message.reply(fetchOk(rules["dispatch"]))
+				container.logger.info("ExtractorVerticle: sent dispatch rule to client")
 			}
 		} catch (Exception e) {
 			def errorMsg = "${e.message}: Expected message format: [action: <action>, (script: <script>)]"
@@ -76,7 +77,7 @@ public class ExtractorVerticle extends Verticle {
 		def body = message.body
 		container.logger.info("ExtractorVerticle: received ${body}")
 		try {
-			body.source
+			assert body.source
 		} catch (Exception e) {
 			def errorMsg = "${e.message}: Expected message format: [source: <source>]"
 			container.logger.error(errorMsg)
