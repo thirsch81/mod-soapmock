@@ -2,3 +2,15 @@ textarea.script-input {
 	resize: vertical;
 	font-family: monospace;
 }
+
+.alert-container {
+	position: absolute;
+}
+
+.alert {
+	position: relative;
+}
+
+.v10 {
+	height: 10px;
+}

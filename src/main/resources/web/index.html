@@ -9,7 +9,7 @@
 <script src="http://code.jquery.com/jquery-1.9.1.js"></script>
 <script src="http://code.jquery.com/ui/1.10.3/jquery-ui.js"></script>
 <script src="js/bootstrap.min.js"></script>
-<script src="http://cdn.sockjs.org/sockjs-0.2.1.min.js"></script>
+<script src="http://cdn.sockjs.org/sockjs-0.3.min.js"></script>
 <script src="js/vertxbus.js"></script>
 </head>
 <body data-spy="scroll">
@@ -32,12 +32,12 @@
 		<div class="tab-content span8">
 			<div class="tab-pane well active" id="general">
 				<div>Mock Server settings</div>
-				<p>
+				<div class="v10"></div>
 				<div></div>
 			</div>
 			<div class="tab-pane well" id="dispatch">
 				<strong>Dispatch rule</strong>
-				<p />
+				<div class="v10"></div>
 				<div>Enter a Groovy script.</div>
 				<div>
 					The root node of incoming XLM request content is bound to
@@ -51,14 +51,26 @@
 					<code>template</code>
 					.
 				</div>
-				<p />
-				<p />
-				<textarea name="rule-script-input" class="script-input span7" rows="10" cols="80"></textarea>
+				<div class="v10"></div>
+				<textarea id="rule-script-input" name="rule-script-input" class="script-input span7" rows="10" cols="80"></textarea>
 				<div class="row">
 					<div class="offset2">
-						<input class="span3" name="rule-script-submit" type="button" disabled="disabled" value="Submit script" />
+						<input id="rule-script-submit" class="span3" name="rule-script-submit" type="button" disabled="disabled"
+							value="Submit script" />
 					</div>
 				</div>
+				<div class="v10"></div>
+				<div id="error-message" class="alert alert-block alert-error fade">
+					<button type="button" class="close" data-dismiss="alert">x</button>
+					<strong class="alert-heading">Error!</strong>
+					<p></p>
+				</div>
+				<div id="success-message" class="alert alert-block alert-success fade">
+					<button type="button" class="close" data-dismiss="alert">x</button>
+					<strong class="alert-heading">Success!</strong>
+					<p></p>
+				</div>
+
 			</div>
 			<div class="tab-pane well" id="templates">...</div>
 		</div>

@@ -63,7 +63,7 @@ def testRenderVerticle() {
 	}
 }
 
-def testExtractorVerticle() {
+def testExtractorVerticleExtract() {
 	container.deployWorkerVerticle("groovy:" + ExtractorVerticle.class.name) { result ->
 		assertTrue("${result.cause()}", result.succeeded)
 		vertx.eventBus.send("extractor.extract", ["source" : '<?xml version="1.0" encoding="UTF-8" ?><root><test>some content</test></root>']) { reply ->
@@ -75,6 +75,43 @@ def testExtractorVerticle() {
 				assertEquals(["content": "some content"], it.binding)
 			}
 			testComplete()
+		}
+	}
+}
+
+def testExtractorVerticleFetchDispatchRule() {
+	container.deployWorkerVerticle("groovy:" + ExtractorVerticle.class.name) { result ->
+		assertTrue("${result.cause()}", result.succeeded)
+		vertx.eventBus.send("extractor.dispatchRule", ["action" : "fetch"]) { reply ->
+			assertNotNull(reply)
+			container.logger.info(reply.body)
+			reply.body.with {
+				assertEquals("ok",it.status )
+				assertNotNull(it.script)
+				assertEquals(new File("rules/dispatch.groovy").text, it.script)
+			}
+			testComplete()
+		}
+	}
+}
+
+def testExtractorVerticleSubmitDispatchRule() {
+	container.deployWorkerVerticle("groovy:" + ExtractorVerticle.class.name) { result ->
+		assertTrue("${result.cause()}", result.succeeded)
+		vertx.eventBus.send("extractor.dispatchRule", ["action" : "submit", "script": /template = "response"/]) { submitReply ->
+			assertNotNull(submitReply)
+			container.logger.info(submitReply.body)
+			assertEquals("ok",submitReply.body.status )
+			vertx.eventBus.send("extractor.dispatchRule", ["action" : "fetch"]) { fetchReply ->
+				assertNotNull(fetchReply)
+				container.logger.info(fetchReply.body)
+				fetchReply.body.with {
+					assertEquals("ok",it.status )
+					assertNotNull(it.script)
+					assertEquals(/template = "response"/, it.script)
+				}
+				testComplete()
+			}
 		}
 	}
 }

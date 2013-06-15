@@ -1,6 +1,6 @@
 jQuery(function() {
 	$(".script-input").keyup(function() {
-		var buttonName = $(this).attr("name").replace("input", "submit")
+		var buttonName = $(this).attr("id").replace("input", "submit")
 		if ($(this).val() == "") {
 			disableButton(buttonName);
 		} else {
@@ -9,10 +9,10 @@ jQuery(function() {
 	});
 });
 
-function disableButton(name) {
-	$("[name='" + name + "']").attr("disabled", "disabled");
+function disableButton(id) {
+	$("#" + id).attr("disabled", "disabled");
 }
 
-function enableButton(name) {
-	$("[name='" + name + "']").removeAttr("disabled");
+function enableButton(id) {
+	$("#" + id).removeAttr("disabled");
 }

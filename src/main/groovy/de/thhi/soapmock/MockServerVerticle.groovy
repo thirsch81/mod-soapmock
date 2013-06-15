@@ -32,11 +32,12 @@ public class MockServerVerticle extends Verticle {
 		}
 		rm.getWithRegEx(".*") { request ->
 			container.logger.info("MockServer: received request ${request.method} ${request.uri}")
-			request.response.sendFile("/web${request.uri}")
+			request.response.sendFile("web${request.uri}")
 		}
 		HttpServer server = vertx.createHttpServer()
+		server.requestHandler(rm.asClosure())
 		vertx.createSockJSServer(server).bridge([prefix: "/eventbus"], [], [])
-		server.requestHandler(rm.asClosure()).listen(8080, "localhost")
+		server.listen(8080, "localhost")
 
 		container.logger.info("MockServerVerticle started")
 	}
