@@ -34,9 +34,10 @@ public class ExtractorVerticle extends Verticle {
 	}
 
 	def prepareShell(source) {
-		def root = new XmlParser().parseText(source)
+		def root = new XmlSlurper().parseText(source)
 		def binding = new Binding()
 		binding.setVariable("root", root)
+		binding.setVariable("request", source)
 		new GroovyShell(binding)
 	}
 
@@ -49,6 +50,7 @@ public class ExtractorVerticle extends Verticle {
 		shell.context.variables.remove("template")
 		shell.evaluate(rules[template])
 		shell.context.variables.remove("root")
+		shell.context.variables.remove("request")
 		bindingOk(template, shell.context.variables)
 	}
 

@@ -8,14 +8,14 @@ jQuery(function() {
 });
 
 function fetchDispatchScript() {
-	eb.send("extractor.dispatchRule", {
+	ebSend("extractor.dispatchRule", {
 		"action" : "fetch"
 	}, updateScript);
 }
 
 function submitDispatchScript() {
 	disableButton("#rule-script-submit");
-	eb.send("extractor.dispatchRule", {
+	ebSend("extractor.dispatchRule", {
 		"action" : "submit",
 		"script" : $("#rule-script-input").val()
 	}, handleReply);

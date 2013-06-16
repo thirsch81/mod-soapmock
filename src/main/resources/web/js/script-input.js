@@ -10,11 +10,11 @@ jQuery(function() {
 });
 
 function disableButton(selector) {
-	$(selector).attr("disabled", "disabled");
+	$(selector).addClass("disabled");
 }
 
 function enableButton(selector) {
-	$(selector).removeAttr("disabled");
+	$(selector).removeClass("disabled");
 }
 
 function showErrorMessage(message) {

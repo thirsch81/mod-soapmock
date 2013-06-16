@@ -13,6 +13,7 @@ class ExtractorVerticleTest {
 		def vert = new ExtractorVerticle()
 		def shell = vert.prepareShell('<?xml version="1.0" encoding="UTF-8" ?><root><test>some content</test></root>')
 		assertEquals("some content", shell.context.variables.root.test.text())
+		assertEquals('<?xml version="1.0" encoding="UTF-8" ?><root><test>some content</test></root>', shell.context.variables.request)
 	}
 
 	@Test
@@ -39,6 +40,7 @@ class ExtractorVerticleTest {
 		def result = extractor.extract(shell, rules, "test-response")
 		assertEquals(["status": "ok", "name": "test-response" ,"binding": ["content": "some content"]], result)
 		assertNull(shell.context.variables.template)
+		assertNull(shell.context.variables.request)
 		assertNull(shell.context.variables.root)
 		assertEquals("some content", shell.context.variables.content)
 	}

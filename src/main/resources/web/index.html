@@ -17,35 +17,43 @@
 		<div class="page-header">
 			<h1>iteraMock</h1>
 		</div>
-
-		<div class="navbar span6">
+		<div class="navbar navbar-inverse span8">
 			<div class="navbar-inner">
-				<ul class="nav" id="menu">
+				<ul id="menu" class="nav">
 					<li><a href="#general" data-toggle="tab">General</a></li>
 					<li><a href="#dispatch" data-toggle="tab">Dispatch</a></li>
 					<li><a href="#templates" data-toggle="tab">Templates</a></li>
 				</ul>
+				<div class="connection-status pull-right text-error">disconnected</div>
 			</div>
 		</div>
 	</div>
 	<div class="container">
-		<div class="tab-content span8">
-			<div class="tab-pane active" id="general">
-				<div class="well">
+		<div class="tab-content span12">
+			<div class="tab-pane row active" id="general">
+				<div class="span8 well">
 					<strong>Mock Server settings</strong>
 					<div class="v10"></div>
 					<div></div>
 				</div>
 			</div>
-			<div class="tab-pane" id="dispatch">
-				<div class="well">
+			<div class="tab-pane row" id="dispatch">
+				<div class="span8 well">
 					<strong>Dispatch rule</strong>
 					<div class="v10"></div>
 					<div>Enter a Groovy script.</div>
 					<div>
-						The root node of incoming XLM request content is bound to
+						The incoming request content is bound to
 						<code>
-							<a href="http://groovy.codehaus.org/api/groovy/util/Node.html">groovy.util.Node</a> root
+							<a href="http://groovy.codehaus.org/groovy-jdk/java/lang/String.html">groovy.lang.String </a>request
+						</code>
+						.
+					</div>
+					<div>
+						The root node of the XML document is bound to
+						<code>
+							<a href="http://groovy.codehaus.org/api/groovy/util/slurpersupport/GPathResult.html">groovy.util.slurpersupport.GPathResult
+							</a> root
 						</code>
 						.
 					</div>
@@ -55,20 +63,45 @@
 						.
 					</div>
 					<div class="v10"></div>
-					<textarea id="rule-script-input" name="rule-script-input" class="script-input span7" rows="10" cols="80"></textarea>
+					<textarea id="rule-script-input" name="rule-script-input" class="script-input span7" rows="10"></textarea>
 					<div class="row">
-						<div class="offset2">
-							<input id="rule-script-submit" class="span3" name="rule-script-submit" type="button" disabled="disabled"
-								value="Submit script" />
+						<div class="offset2 span2">
+							<button id="rule-script-submit" class="btn btn-inverse disabled span2" name="rule-script-submit">Submit
+								script</button>
 						</div>
 					</div>
 				</div>
 				<div class="v10"></div>
 				<div class="alert-container"></div>
 			</div>
-			<div class="tab-pane" id="templates">
-				<div class="well">
-					<strong>Template settings</strong>
+			<div class="tab-pane row" id="templates">
+				<div class="well span10">
+					<strong>Response template settings</strong>
+					<div class="v10"></div>
+					<div>Each template has a name and an extract script.</div>
+					<div>
+						A template is picked according to the
+						<code>template</code>
+						value of the dispatch script.
+					</div>
+					<div class="v10"></div>
+					<ul class="nav nav-tabs" id="template-tabs">
+						<li><a href="#test-response" data-toggle="tab">test-response</a></li>
+						<li><a href="#test-response2" data-toggle="tab">test-response2</a></li>
+						<li><a href="#test-response3" data-toggle="tab">test-response3</a></li>
+					</ul>
+					<div id="template-container" class="tab-content">
+						<div class="tab-pane" id="test-response">
+							<textarea class="script-input span7" rows="10"></textarea>
+						</div>
+						<div class="tab-pane" id="test-response2">
+							<textarea class="script-input span7" rows="10"></textarea>
+						</div>
+						<div class="tab-pane" id="test-response3">
+							<textarea class="script-input span7" rows="10"></textarea>
+						</div>
+					</div>
+
 				</div>
 			</div>
 		</div>
