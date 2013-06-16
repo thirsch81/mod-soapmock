@@ -32,29 +32,43 @@ function submitTemplate(name) {
 function updateTemplates(reply) {
 	handleReplyStatus(reply);
 	if (reply.status == "ok") {
-		insertTemplates(reply.templates)
+		clearTemplates();
+		insertTemplates(reply.templates);
+		setTimeout(function() { $("#template-tabs a:first").click(); });
 	}
 }
 
 function insertTemplates(templates) {
 	for ( var i = 0; i < templates.length; i++) {
-		insertTemplate(templates[i].name);
+		insertTemplate(templates[i].name, templates[i].template);
 	}
 }
 
 function addTemplate() {
-	var name = $("#input-template-name").val();
-	insertTemplate(name);
+	var name = $("#input-template-name").val() || "";
+	$("#input-template-name").val("")
+	var pattern = /^[A-Za-z0-9_-]{3,16}$/;
+	if (pattern.test(name)) {
+		insertTemplate(name, "");
+	} else {
+		showErrorMessage("Provide a better name!");
+	}
 }
 
-function insertTemplate(name) {
+function insertTemplate(name, template) {
 	$("#template-tabs").append(templateTab(name));
 	$("#template-container").append(templateTabContent(name));
+	$("#" + name + "-template-input").val(template);
 }
 
 function removeTemplate(name) {
 	$("li a[href=#" + name + "]").remove();
 	$("#" + name).remove();
+}
+
+function clearTemplates() {
+	$("#template-tabs").empty();
+	$("#template-container").empty();
 }
 
 function templateTab(name) {

@@ -1,4 +1,4 @@
-package de.thhi.soapmock.test.integration.groovy;
+package de.thhi.soapmock.test.integration;
 /*
  * Copyright 2013 Red Hat, Inc.
  *

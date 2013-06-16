@@ -10,6 +10,7 @@ public class RenderVerticle extends Verticle {
 	def start() {
 		readTemplates()
 		vertx.eventBus.registerHandler("renderer.render", handleRender)
+		vertx.eventBus.registerHandler("renderer.templates", handleTemplates)
 		container.logger.info("RenderVerticle started")
 	}
 
@@ -21,15 +22,38 @@ public class RenderVerticle extends Verticle {
 		["status": "error", "message": message]
 	}
 
+	def templatesOk(templates) {
+		["status": "ok", "templates": templates]
+	}
+
 	def renderOk(name, response) {
 		["status": "ok", "${name}": response]
 	}
 
-	def render(name, binding) {
+	def handleTemplates = { message ->
+		def body = message.body
+		container.logger.info("RenderVerticle: received ${body}")
+		try {
+			assert body.action
+		} catch (Exception e) {
+			def errorMsg = "${e.message}: Expected message format: [action: <name>, action: <binding>]"
+			container.logger.error(errorMsg)
+			message.reply(error(errorMsg))
+		}
 		def templates = templates()
-		def template = templates[name]
-		def response = new SimpleTemplateEngine().createTemplate(template).make(binding).toString()
-		renderOk(name, response)
+		try {
+			if("fetch".equals(body.action)) {
+				def result = []
+				templates.each { k, v ->
+					result.add(["name": k, "template": v])
+				}
+				message.reply(templatesOk(result))
+				container.logger.info("RenderVerticle: sent templates to client")
+			}
+		} catch (Exception e) {
+			container.logger.error(e.message)
+			message.reply(error(e.message))
+		}
 	}
 
 	def handleRender =  { message ->
@@ -52,6 +76,13 @@ public class RenderVerticle extends Verticle {
 			container.logger.error(e.message)
 			message.reply(error(e.message))
 		}
+	}
+
+	def render(name, binding) {
+		def templates = templates()
+		def template = templates[name]
+		def response = new SimpleTemplateEngine().createTemplate(template).make(binding).toString()
+		renderOk(name, response)
 	}
 
 	def readTemplates() {
