@@ -16,6 +16,18 @@ textarea.script-input {
 	height: 40px;
 }
 
+.input-append .btn {
+	height: 30px;
+}
+
 .v10 {
 	height: 10px;
+}
+
+.v50 {
+	height: 50px;
+}
+
+.v100 {
+	height: 100px;
 }
