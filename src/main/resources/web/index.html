@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<html>
+<html ng-app>
 <head>
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>iteraMock</title>
@@ -7,8 +7,8 @@
 <link rel="stylesheet" type="text/css" href="css/bootstrap-responsive.min.css">
 <link rel="stylesheet" type="text/css" href="css/main.css">
 <script src="http://code.jquery.com/jquery-1.9.1.js"></script>
-<script src="http://code.jquery.com/ui/1.10.3/jquery-ui.js"></script>
-<script src="js/bootstrap.min.js"></script>
+<script src="http://cdnjs.cloudflare.com/ajax/libs/twitter-bootstrap/2.3.2/js/bootstrap.min.js"></script>
+<script src="http://ajax.googleapis.com/ajax/libs/angularjs/1.0.7/angular.min.js"></script>
 <script src="http://cdn.sockjs.org/sockjs-0.3.4.min.js"></script>
 <script src="js/vertxbus.js"></script>
 </head>
@@ -87,7 +87,7 @@
 			</div>
 			<div class="tab-pane" id="templates">
 				<div class="row">
-					<div class="well span9">
+					<div ng-controller="TemplateCtrl" class="well span9">
 						<strong>Response template settings</strong>
 						<div class="v10"></div>
 						<div>Each template has a name and an extract script.</div>
@@ -100,16 +100,32 @@
 						<div class="control-group">
 							<div class="controls">
 								<div class="input-append">
-									<input id="input-template-name" class="input-large" placeholder="template name" type="text">
-									<button id="add-template" class="btn add-on">Add template</button>
+									<input ng-model="templateName" id="input-template-name" class="input-large" placeholder="template name"
+										type="text">
+									<button ng-click="addTemplate()" id="add-template" class="btn add-on">Add template</button>
 								</div>
 
 							</div>
 						</div>
 						<div class="v10"></div>
 						<ul class="nav nav-tabs" id="template-tabs">
+							<li ng-repeat="template in templates" ng-click="$emit('active', {{template.name}}')"><a
+								href="#{{template.name}}" data-toggle="tab">{{template.name}}</a></li>
 						</ul>
-						<div id="template-container" class="tab-content"></div>
+						<div id="template-container" class="tab-content">
+							<div ng-repeat="template in templates" class="tab-pane" id="{{template.name}}">
+								<textarea id="{{template.name}}-template-input" class="script-input span9" rows="10">
+						</textarea>
+								<div class="row">
+									<div class="offset4">
+										<button ng-click="submit()" id="{{template.name}}-template-submit"
+											class="btn btn-inverse disabled template-submit span2">Submit template</button>
+										<button ng-click="deleteTemplate()" id="{{template.name}}-template-delete"
+											class="btn btn-danger template-delete span2">Delete template</button>
+									</div>
+								</div>
+							</div>
+						</div>
 					</div>
 				</div>
 			</div>
