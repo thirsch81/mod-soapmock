@@ -36,7 +36,7 @@ public class RenderVerticle extends Verticle {
 		try {
 			assert body.action
 		} catch (Exception e) {
-			def errorMsg = "${e.message}: Expected message format: [action: <name>, action: <binding>]"
+			def errorMsg = "${e.message}: Expected message format: [action: <action>, (name: <name>, template: <template>)]"
 			container.logger.error(errorMsg)
 			message.reply(error(errorMsg))
 		}

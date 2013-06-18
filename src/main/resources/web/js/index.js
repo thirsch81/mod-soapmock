@@ -1,50 +1,60 @@
-var eb = null;
+var app = angular.module("iteraMock", []);
+app.factory("EventBus", function() {
+	return new vertx.EventBus("http://localhost:8080/eventbus");
 
-jQuery(function() {
-	openConn();
 });
 
-function ebPublish(address, message, handler) {
-	if (eb) {
-		eb.publish(address, message, handler)
+function MainCtrl($scope, EventBus) {
+
+	$scope.status = "waiting";
+	$scope.statusClass = "text-warning";
+
+	EventBus.onopen = function() {
+		$scope.status = "connected";
+		$scope.statusClass = "text-success";
+		$scope.$digest();
+	}
+
+	EventBus.onclose = function() {
+		$scope.status = "disconnected";
+		$scope.statusClass = "text-error";
+		$scope.$digest();
 	}
 }
 
-function ebSend(address, message, handler) {
-	if (eb) {
-		eb.send(address, message, handler)
+function showMessage(reply) {
+	if ("ok" == reply.status) {
+		showSuccessMessage(JSON.stringify(reply));
+	} else {
+		showErrorMessage(JSON.stringify(reply));
 	}
+};
+
+function showErrorMessage(message) {
+	clearMessages();
+	$(".alert-container").prepend(errorMessage(message));
+	$(".error-message").addClass("in")
 }
 
-function openConn() {
-	if (!eb) {
-		eb = new vertx.EventBus("http://localhost:8080/eventbus");
-		eb.onopen = function() {
-			statusConnected()
-		}
-		eb.onclose = function() {
-			eb = null;
-			statusDisconnected()
-		};
-	}
+function showSuccessMessage(message) {
+	clearMessages();
+	$(".alert-container").prepend(successMessage(message));
+	setTimeout(function() {
+		$(".success-message").addClass("in")
+	});
 }
 
-function closeConn() {
-	if (eb) {
-		eb.close();
-	}
+function clearMessages() {
+	$(".alert-container").html("");
 }
 
-function statusConnected() {
-	$connectionStatus = $(".connection-status")
-	$connectionStatus.text("connected")
-	$connectionStatus.removeClass("text-error")
-	$connectionStatus.addClass("text-success")
+var errorMessage = function(text) {
+	return '<div class="error-message alert alert-block alert-error fade">'
+			+ '	<button type="button" class="close" data-dismiss="alert">x</button>'
+			+ '	<strong class="alert-heading">Error!</strong><p>' + text + '</p></div>';
 }
-
-function statusDisconnected() {
-	$connectionStatus = $(".connection-status")
-	$connectionStatus.text("disconnected")
-	$connectionStatus.removeClass("text-success")
-	$connectionStatus.addClass("text-error")
+var successMessage = function(text) {
+	return '<div class="success-message alert alert-block alert-success fade">'
+			+ '	<button type="button" class="close" data-dismiss="alert">x</button>'
+			+ '	<strong class="alert-heading">Success!</strong><p>' + text + '</p></div>';
 }

@@ -1,36 +1,23 @@
-jQuery(function() {
-	$("#rule-script-submit").click(function() {
-		submitDispatchScript();
-	});
-	$("a[href='#dispatch']").click(function() {
-		fetchDispatchScript();
-	});
-});
+function DispatchCtrl($scope, EventBus) {
 
-function fetchDispatchScript() {
-	ebSend("extractor.dispatchRule", {
-		"action" : "fetch"
-	}, updateScript);
-}
+	$scope.script = "";
 
-function submitDispatchScript() {
-	disableButton("#rule-script-submit");
-	ebSend("extractor.dispatchRule", {
-		"action" : "submit",
-		"script" : $("#rule-script-input").val()
-	}, handleReply);
-}
+	$scope.submit = function() {
+		EventBus.send("extractor.dispatchRule", {
+			action : "submit",
+			script : $scope.script
+		}, showMessage);
+	};
 
-function handleReply(reply) {
-	if ("ok" == reply.status) {
-		showSuccessMessage(JSON.stringify(reply));
-	} else {
-		showErrorMessage(JSON.stringify(reply));
-	}
-}
+	$scope.fetch = function() {
+		EventBus.send("extractor.dispatchRule", {
+			action : "fetch"
+		}, updateScript);
+	};
 
-function updateScript(reply) {
-	handleReply(reply);
-	$("#rule-script-input").val(reply.script);
-	disableButton("#rule-script-submit");
-}
+	function updateScript(reply) {
+		showMessage(reply);
+		$scope.script = reply.script;
+		$scope.$digest();
+	};
+};

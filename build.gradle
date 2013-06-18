@@ -49,6 +49,12 @@ test {
 	 */
 }
 
+task copyModAgain(type: Copy) {
+	dependsOn copyMod
+	from("${buildDir}/mods")
+	into("${projectDir}/mods")
+}
+
 /*
  If you're uploading stuff to Maven, Gradle needs to generate a POM.
  Please edit the details below.

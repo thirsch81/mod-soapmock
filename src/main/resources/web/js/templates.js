@@ -1,104 +1,69 @@
-jQuery(function() {
-	// $(document).on("click", ".template-delete", function() {
-	// var templateName = $(this).attr("id").replace("-template-delete", "");
-	// removeTemplate(templateName);
-	// });
-	// $(document).on("click", ".template-submit", function() {
-	// var templateName = $(this).attr("id").replace("-template-submit", "");
-	// submitTemplate(templateName);
-	// });
-	// $("a[href='#templates']").click(function() {
-	// fetchTemplates();
-	// });
-	// $("#add-template").click(function() {
-	// addTemplate();
-	// });
-});
+function TemplateCtrl($scope, EventBus) {
 
-function fetchTemplates() {
-	ebSend("renderer.templates", {
-		"action" : "fetch"
-	}, updateTemplates);
-}
+	$scope.templates = [];
+	$scope.templateName = "";
 
-function submitTemplate(name) {
-	disableButton("#" + name + "-template-submit");
-	ebSend("renderer.templates", {
-		"action" : "submit",
-		"script" : $("#rule-script-input").val()
-	}, handleReplyStatus);
-}
-
-function updateTemplates(reply) {
-	handleReplyStatus(reply);
-	if (reply.status == "ok") {
-		clearTemplates();
-		insertTemplates(reply.templates);
-		setTimeout(function() {
-			$("#template-tabs a:first").click();
-		});
+	$scope.add = function() {
+		var template = {
+			name : $scope.templateName,
+			template : "test-template"
+		};
+		if (isDuplicate(template.name)) {
+			showErrorMessage("Duplicate template name!")
+		} else {
+			$scope.templates.push(template);
+			$scope.templateName = "";
+			setTimeout(function() {
+				$("#template-tabs a[href='#" + template.name + "']").click();
+			});
+		};
 	}
-}
 
-function insertTemplates(templates) {
-	for ( var i = 0; i < templates.length; i++) {
-		insertTemplate(templates[i].name, templates[i].template);
+	$scope.fetchTemplates = function() {
+		EventBus.send("renderer.templates", {
+			action : "fetch"
+		}, updateTemplates);
 	}
-}
-
-function addTemplate() {
-	var name = $("#input-template-name").val() || "";
-	$("#input-template-name").val("")
-	var pattern = /^[A-Za-z0-9_-]{3,16}$/;
-	if (pattern.test(name)) {
-		insertTemplate(name, "");
-	} else {
-		showErrorMessage("Provide a better name!");
-	}
-}
-
-function insertTemplate(name, template) {
-	$("#template-tabs").append(templateTab(name));
-	$("#template-container").append(templateTabContent(name));
-	$("#" + name + "-template-input").val(template);
-}
-
-function removeTemplate(name) {
-	$("li a[href=#" + name + "]").remove();
-	$("#" + name).remove();
-}
-
-function clearTemplates() {
-	$("#template-tabs").empty();
-	$("#template-container").empty();
-}
-
-function TemplateCtrl($scope) {
-	$scope.templates = [{
-		name : "test",
-		template : "test-template",
-	}, {
-		name : "name2",
-		template : "test",
-	}];
-	$scope.activeTemplate = "";
-	$scope.addTemplate = function() {
-		$scope.templates.push({
-			name : $scope.templateName
-		});
-		$scope.activeTemplate = $scope.templateName;
-		$scope.templateName = "";
-	};
-
-	$scope.$on("active", function(name) {
-		$scope.activeTemplate = name;
-	});
 
 	$scope.deleteTemplate = function() {
-		$scope.templates.splice($scope.templates.indexOf($scope.activeTemplate), 1);
-	};
+		angular.forEach($scope.templates, function(value, key) {
+			if (value.name == activeTemplate()) {
+				$scope.templates.splice(key, 1);
+			};
+		});
+	}
 
 	$scope.submit = function() {
-		//
-	};
+		EventBus.send("renderer.templates", {
+			"action" : "submit",
+			"name" : activeTemplate(),
+			"template" : activeTemplateContent()
+		}, showMessage);
+	}
+
+	function isDuplicate(name) {
+		return _.contains(_.pluck($scope.templates, "name"), name);
+	}
+
+	function activeTemplate() {
+		return $("#template-tabs li.active a").text();
+	}
+
+	function activeTemplateContent() {
+		return $("#template-container div.active textarea").val();
+	}
+
+	function updateTemplates(reply) {
+		showMessage(reply);
+		if (reply.status == "ok") {
+			$scope.templates = [];
+			angular.forEach(reply.templates, function(template, index) {
+				$scope.templates.push({
+					name : template.name,
+					template : template.template
+				});
+			});
+			$scope.$digest();
+		};
+	}
 }

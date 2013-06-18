@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<html ng-app>
+<html data-ng-app="iteraMock">
 <head>
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>iteraMock</title>
@@ -9,11 +9,13 @@
 <script src="http://code.jquery.com/jquery-1.9.1.js"></script>
 <script src="http://cdnjs.cloudflare.com/ajax/libs/twitter-bootstrap/2.3.2/js/bootstrap.min.js"></script>
 <script src="http://ajax.googleapis.com/ajax/libs/angularjs/1.0.7/angular.min.js"></script>
+<script src="http://cdnjs.cloudflare.com/ajax/libs/angular-ui-bootstrap/0.3.0/ui-bootstrap-tpls.min.js"></script>
+<script src="http://cdnjs.cloudflare.com/ajax/libs/underscore.js/1.4.4/underscore-min.js"></script>
 <script src="http://cdn.sockjs.org/sockjs-0.3.4.min.js"></script>
 <script src="js/vertxbus.js"></script>
 </head>
 <body data-spy="scroll">
-	<div class="container">
+	<div data-ng-controller="MainCtrl" class="container">
 		<div class="page-header row span8">
 			<h1>iteraMock</h1>
 		</div>
@@ -25,7 +27,7 @@
 					<li><a href="#extraction" data-toggle="tab">Extraction</a></li>
 					<li><a href="#templates" data-toggle="tab">Templates</a></li>
 				</ul>
-				<div class="connection-status pull-right text-error">disconnected</div>
+				<div class="connection-status pull-right {{statusClass}}">{{status}}</div>
 			</div>
 		</div>
 	</div>
@@ -40,7 +42,7 @@
 					</div>
 				</div>
 			</div>
-			<div class="tab-pane" id="dispatch">
+			<div data-ng-controller="DispatchCtrl" class="tab-pane" id="dispatch">
 				<div class="row">
 					<div class="well span8">
 						<strong>Dispatch rule</strong>
@@ -67,13 +69,21 @@
 							.
 						</div>
 						<div class="v10"></div>
-						<textarea id="rule-script-input" name="rule-script-input" class="script-input span8" rows="10"></textarea>
 						<div class="row">
 							<div class="offset2">
-								<button id="rule-script-submit" class="btn btn-inverse disabled span3" name="rule-script-submit">Submit
-									script</button>
+								<button data-ng-click="fetch()" class="btn btn-success span3">Fetch script</button>
 							</div>
 						</div>
+						<div class="v10"></div>
+						<form name="dispatchRule">
+							<textarea name="script" data-ng-model="script" data-ng-required="true" class="script-input span8" rows="10"></textarea>
+							<div class="row">
+								<div class="offset2">
+									<button data-ng-click="submit()" data-ng-disabled="!dispatchRule.$valid" class="btn btn-inverse span3">Submit
+										script</button>
+								</div>
+							</div>
+						</form>
 					</div>
 				</div>
 			</div>
@@ -85,9 +95,9 @@
 					</div>
 				</div>
 			</div>
-			<div class="tab-pane" id="templates">
+			<div data-ng-controller="TemplateCtrl" class="tab-pane" id="templates">
 				<div class="row">
-					<div ng-controller="TemplateCtrl" class="well span9">
+					<div class="well span9">
 						<strong>Response template settings</strong>
 						<div class="v10"></div>
 						<div>Each template has a name and an extract script.</div>
@@ -97,32 +107,38 @@
 							value of the dispatch script.
 						</div>
 						<div class="v10"></div>
-						<div class="control-group">
-							<div class="controls">
-								<div class="input-append">
-									<input ng-model="templateName" id="input-template-name" class="input-large" placeholder="template name"
-										type="text">
-									<button ng-click="addTemplate()" id="add-template" class="btn add-on">Add template</button>
+						<form name="addTemplate">
+							<div class="control-group">
+								<div class="controls">
+									<div class="input-append">
+										<input data-ng-model="templateName" data-ng-required="true" data-ng-pattern="/^\w{3,16}$/" class="input-large"
+											placeholder="enter template name" type="text">
+										<button data-ng-click="add()" data-ng-disabled="!addTemplate.$valid" class="btn add-on">Add template</button>
+									</div>
 								</div>
-
 							</div>
+						</form>
+						<div class="v10"></div>
+						<div class="row">
+							<button data-ng-click="fetchTemplates()" class="btn btn-success span3">Fetch templates</button>
 						</div>
 						<div class="v10"></div>
-						<ul class="nav nav-tabs" id="template-tabs">
-							<li ng-repeat="template in templates" ng-click="$emit('active', {{template.name}}')"><a
-								href="#{{template.name}}" data-toggle="tab">{{template.name}}</a></li>
-						</ul>
-						<div id="template-container" class="tab-content">
-							<div ng-repeat="template in templates" class="tab-pane" id="{{template.name}}">
-								<textarea id="{{template.name}}-template-input" class="script-input span9" rows="10">
-						</textarea>
-								<div class="row">
-									<div class="offset4">
-										<button ng-click="submit()" id="{{template.name}}-template-submit"
-											class="btn btn-inverse disabled template-submit span2">Submit template</button>
-										<button ng-click="deleteTemplate()" id="{{template.name}}-template-delete"
-											class="btn btn-danger template-delete span2">Delete template</button>
-									</div>
+						<div class="tabbable">
+							<ul class="nav nav-tabs" id="template-tabs">
+								<li data-ng-repeat="template in templates"><a href="#{{template.name}}" data-toggle="tab">{{template.name}}</a></li>
+							</ul>
+							<div id="template-container" class="tab-content">
+								<div data-ng-repeat="template in templates" class="tab-pane" id="{{template.name}}">
+									<form name="submit{{template.name}}">
+										<textarea data-ng-model="template.template" data-ng-required="true" class="script-input span9" rows="10"></textarea>
+										<div class="row">
+											<div class="offset4">
+												<button data-ng-click="submit()" data-ng-disabled="!submit{{template.name}}.$valid"
+													class="btn btn-inverse span2">Submit template</button>
+												<button data-ng-click="deleteTemplate()" class="btn btn-danger span2">Delete template</button>
+											</div>
+										</div>
+									</form>
 								</div>
 							</div>
 						</div>
@@ -137,7 +153,6 @@
 		</div>
 	</div>
 	<script src="js/index.js"></script>
-	<script src="js/script-input.js"></script>
 	<script src="js/dispatch-rule.js"></script>
 	<script src="js/templates.js"></script>
 </body>
